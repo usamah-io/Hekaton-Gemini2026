@@ -486,21 +486,6 @@ export default function Dashboard() {
               <span>AI generation enabled</span>
             </div>
 
-            {/* Custom PWA Install Button */}
-            {deferredPrompt && (
-              <button
-                type="button"
-                onClick={handleInstallPWA}
-                className="group flex items-center gap-2 h-10 px-3 rounded-xl border border-white/10 transition-all duration-300 ease-in-out cursor-pointer shadow-sm hover:scale-[1.05] active:scale-[0.95] w-10 hover:w-[136px] overflow-hidden whitespace-nowrap bg-gemini-gradient text-white"
-                title="Install SKS-Master PWA"
-              >
-                <Download className="w-4 h-4 shrink-0 text-white animate-bounce" />
-                <span className="text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  Install Aplikasi
-                </span>
-              </button>
-            )}
-
             {/* Toggle Theme Button */}
             <button
               type="button"
@@ -564,7 +549,7 @@ export default function Dashboard() {
             {activeTab === 'quiz' && (
               <>
                 {errorMsg && (
-                  <div className="flex items-center gap-3 bg-rose-955/10 border border-rose-500/20 rounded-xl p-4 text-rose-400 text-sm">
+                  <div className="flex items-center gap-3 bg-rose-950/10 border border-rose-500/20 rounded-xl p-4 text-rose-400 text-sm">
                     <AlertCircle className="w-5 h-5 shrink-0" />
                     <p>{errorMsg}</p>
                   </div>
@@ -581,7 +566,7 @@ export default function Dashboard() {
                       <BookOpen className="w-6 h-6" />
                     </div>
                     <div>
-                      <h2 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-zinc-955'}`}>Racik Kuis SKS Baru</h2>
+                      <h2 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-zinc-950'}`}>Racik Kuis SKS Baru</h2>
                       <p className="text-xs text-zinc-400 mt-0.5">Konfigurasikan subjek dan tingkat kesulitan kuis pilihan ganda instan Anda.</p>
                     </div>
                   </div>
@@ -624,7 +609,7 @@ export default function Dashboard() {
                               difficulty === lvl
                                 ? 'bg-gradient-to-r from-blue-600 to-blue-700 border-blue-505 text-white shadow-lg shadow-blue-900/10'
                                 : theme === 'dark'
-                                  ? 'bg-zinc-955/40 border-zinc-800/60 hover:bg-zinc-900/60 text-zinc-400 hover:text-zinc-202'
+                                  ? 'bg-zinc-950/40 border-zinc-800/60 hover:bg-zinc-900/60 text-zinc-400 hover:text-zinc-202'
                                   : 'bg-zinc-101/50 border-zinc-200 hover:bg-zinc-50 text-zinc-650 hover:text-zinc-900'
                             }`}
                           >
@@ -708,7 +693,7 @@ export default function Dashboard() {
                             selectedHistoryItem.difficulty === 'Sulit' 
                               ? 'bg-rose-950/20 border-rose-800/40 text-rose-455' 
                               : selectedHistoryItem.difficulty === 'Sedang'
-                                ? 'bg-amber-955/20 border-amber-800/40 text-amber-500'
+                                ? 'bg-amber-950/20 border-amber-800/40 text-amber-500'
                                 : 'bg-emerald-950/20 border-emerald-800/40 text-emerald-500'
                           }`}>
                             {selectedHistoryItem.difficulty}
@@ -790,7 +775,7 @@ export default function Dashboard() {
                         </div>
 
                         <div className={`p-4 rounded-xl border flex items-center justify-between transition-colors duration-300 ${
-                          theme === 'dark' ? 'bg-zinc-955/40 border-zinc-850' : 'bg-zinc-101/50 border-zinc-200'
+                          theme === 'dark' ? 'bg-zinc-950/40 border-zinc-850' : 'bg-zinc-101/50 border-zinc-200'
                         }`}>
                           <div className="space-y-0.5">
                             <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Rasio Poin</span>
@@ -893,9 +878,9 @@ export default function Dashboard() {
                                 <div className="flex items-center gap-2 flex-wrap">
                                   <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${
                                     item.difficulty === 'Sulit' 
-                                      ? 'bg-rose-955/20 border-rose-800/40 text-rose-405' 
+                                      ? 'bg-rose-950/20 border-rose-800/40 text-rose-405' 
                                       : item.difficulty === 'Sedang'
-                                        ? 'bg-amber-955/20 border-amber-800/40 text-amber-500'
+                                        ? 'bg-amber-950/20 border-amber-800/40 text-amber-500'
                                         : 'bg-emerald-950/20 border-emerald-800/40 text-emerald-505'
                                   }`}>
                                     {item.difficulty}
@@ -991,7 +976,7 @@ export default function Dashboard() {
               </div>
               
               <div className="text-right">
-                <span className={`text-sm font-bold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-zinc-955'}`}>
+                <span className={`text-sm font-bold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-zinc-950'}`}>
                   Soal {currentQuestionIndex + 1} dari {questions.length}
                 </span>
               </div>
@@ -1157,7 +1142,7 @@ export default function Dashboard() {
                   onClick={handleResetQuiz}
                   className={`flex-1 border transition-all duration-200 flex items-center justify-center gap-2 text-sm active:scale-95 font-bold py-3 px-4 rounded-xl cursor-pointer ${
                     theme === 'dark'
-                      ? 'bg-zinc-955 border-zinc-800 hover:bg-zinc-900/60 text-zinc-300'
+                      ? 'bg-zinc-950 border-zinc-800 hover:bg-zinc-900/60 text-zinc-300'
                       : 'bg-white border-zinc-300 hover:bg-zinc-101 text-zinc-700'
                   }`}
                 >
@@ -1188,7 +1173,7 @@ export default function Dashboard() {
                     className={`border rounded-2xl overflow-hidden transition-all duration-300 ${
                       isCorrect 
                         ? theme === 'dark' ? 'border-emerald-500/20 bg-emerald-950/5/20 backdrop-blur-xl' : 'border-emerald-250 bg-emerald-50/15'
-                        : theme === 'dark' ? 'border-rose-500/20 bg-rose-955/5 backdrop-blur-xl' : 'border-rose-250 bg-rose-50/15'
+                        : theme === 'dark' ? 'border-rose-500/20 bg-rose-950/5 backdrop-blur-xl' : 'border-rose-250 bg-rose-50/15'
                     }`}
                   >
                     {/* Header bar / Accordion Toggle */}
@@ -1242,7 +1227,7 @@ export default function Dashboard() {
                                   : 'border-rose-300 bg-rose-50/80 text-rose-700 font-medium';
                               } else {
                                 optStyle = theme === 'dark'
-                                  ? 'border-zinc-800/50 bg-zinc-955/30 text-zinc-400'
+                                  ? 'border-zinc-800/50 bg-zinc-950/30 text-zinc-400'
                                   : 'border-zinc-200 bg-zinc-101/50 text-zinc-650';
                               }
 
@@ -1362,6 +1347,20 @@ export default function Dashboard() {
             </button>
           </div>
         </div>
+      )}
+      {/* Custom Floating PWA Install Button */}
+      {deferredPrompt && (
+        <button
+          type="button"
+          onClick={handleInstallPWA}
+          className="fixed bottom-8 right-8 z-50 group flex items-center justify-center hover:justify-start gap-2.5 h-12 rounded-full transition-all duration-300 ease-in-out cursor-pointer shadow-xl hover:scale-[1.05] active:scale-[0.95] w-12 hover:w-[160px] overflow-hidden whitespace-nowrap bg-gemini-gradient text-white border border-white/20 px-3.5"
+          title="Install SKS-Master PWA"
+        >
+          <Download className="w-4.5 h-4.5 shrink-0 text-white animate-bounce" />
+          <span className="text-xs font-black whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            Install Aplikasi
+          </span>
+        </button>
       )}
     </div>
   );

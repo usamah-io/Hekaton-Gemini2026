@@ -72,7 +72,7 @@ export default function Home() {
 
   return (
     <div className={`min-h-screen flex flex-col font-sans overflow-x-hidden relative transition-all duration-300 ${
-      theme === 'dark' ? 'bg-zinc-955 text-zinc-100' : 'bg-zinc-50 text-zinc-900'
+      theme === 'dark' ? 'bg-zinc-950 text-zinc-100' : 'bg-zinc-50 text-zinc-900'
     }`}>
       {/* Background radial glow */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
@@ -83,7 +83,7 @@ export default function Home() {
           theme === 'dark' ? 'bg-sky-900/10' : 'bg-sky-200/20'
         }`}></div>
         <div className={`absolute -bottom-40 left-1/4 w-[500px] h-[500px] rounded-full blur-3xl opacity-60 transition-colors duration-300 ${
-          theme === 'dark' ? 'bg-blue-955/20' : 'bg-blue-100/20'
+          theme === 'dark' ? 'bg-blue-950/20' : 'bg-blue-100/20'
         }`}></div>
       </div>
 
@@ -111,20 +111,7 @@ export default function Home() {
               Masuk Dasbor
             </Link>
 
-            {/* Custom PWA Install Button */}
-            {deferredPrompt && (
-              <button
-                type="button"
-                onClick={handleInstallPWA}
-                className="group flex items-center gap-2 h-10 px-3 rounded-xl border border-white/10 transition-all duration-300 ease-in-out cursor-pointer shadow-sm hover:scale-[1.05] active:scale-[0.95] w-10 hover:w-[136px] overflow-hidden whitespace-nowrap bg-gemini-gradient text-white"
-                title="Install SKS-Master PWA"
-              >
-                <Download className="w-4 h-4 shrink-0 text-white animate-bounce" />
-                <span className="text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  Install Aplikasi
-                </span>
-              </button>
-            )}
+
 
             {/* Toggle Theme Button */}
             <button
@@ -362,6 +349,20 @@ export default function Home() {
       }`}>
         <p className="max-w-6xl mx-auto">&copy; 2026 SKS-Master. Dibuat untuk Gemini Innovation Hackathon 2026. Melaju kencang dengan AI.</p>
       </footer>
+      {/* Custom Floating PWA Install Button */}
+      {deferredPrompt && (
+        <button
+          type="button"
+          onClick={handleInstallPWA}
+          className="fixed bottom-8 right-8 z-50 group flex items-center justify-center hover:justify-start gap-2.5 h-12 rounded-full transition-all duration-300 ease-in-out cursor-pointer shadow-xl hover:scale-[1.05] active:scale-[0.95] w-12 hover:w-[160px] overflow-hidden whitespace-nowrap bg-gemini-gradient text-white border border-white/20 px-3.5"
+          title="Install SKS-Master PWA"
+        >
+          <Download className="w-4.5 h-4.5 shrink-0 text-white animate-bounce" />
+          <span className="text-xs font-black whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            Install Aplikasi
+          </span>
+        </button>
+      )}
     </div>
   );
 }
