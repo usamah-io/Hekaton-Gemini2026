@@ -13,12 +13,80 @@ import {
   BookOpenCheck,
   Cpu,
   Sun,
-  Moon
+  Moon,
+  X
 } from "lucide-react";
 
 export default function Home() {
   const [theme, setTheme] = useState('dark');
   const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [dragDistance, setDragDistance] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleTouchStart = (e) => {
+    setStartX(e.touches[0].clientX);
+    setIsDragging(true);
+    setDragDistance(0);
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isDragging) return;
+    const currentX = e.touches[0].clientX;
+    const diff = startX - currentX; // Dragging left is positive
+    if (isOpen) {
+      if (diff < 0) {
+        setDragDistance(diff);
+      }
+    } else {
+      if (diff > 0) {
+        setDragDistance(diff);
+      }
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    if (isOpen) {
+      if (dragDistance < -35) {
+        setIsOpen(false);
+      }
+    } else {
+      if (dragDistance > 35) {
+        setIsOpen(true);
+      }
+    }
+    setDragDistance(0);
+  };
+
+  const handleMouseDown = (e) => {
+    setStartX(e.clientX);
+    setIsDragging(true);
+    setDragDistance(0);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    const diff = startX - e.clientX;
+    if (isOpen) {
+      if (diff < 0) setDragDistance(diff);
+    } else {
+      if (diff > 0) setDragDistance(diff);
+    }
+  };
+
+  const handleMouseUp = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    if (isOpen) {
+      if (dragDistance < -35) setIsOpen(false);
+    } else {
+      if (dragDistance > 35) setIsOpen(true);
+    }
+    setDragDistance(0);
+  };
 
   // Load theme and setup SW/PWA Listeners
   useEffect(() => {
@@ -359,27 +427,72 @@ export default function Home() {
       }`}>
         <p className="max-w-6xl mx-auto">&copy; 2026 SKS-Master. Dibuat untuk Gemini Innovation Hackathon 2026. Melaju kencang dengan AI.</p>
       </footer>
-      <button
-        type="button"
-        onClick={handleInstallPWA}
-        className={`fixed bottom-8 right-8 z-50 group flex items-center justify-center gap-2.5 h-12 rounded-full transition-all duration-300 ease-in-out cursor-pointer w-12 overflow-hidden whitespace-nowrap backdrop-blur-sm px-3.5 shadow-lg ${
-          deferredPrompt ? 'hover:w-[160px] hover:justify-start hover:shadow-xl' : 'hover:scale-105'
-        } ${
-          theme === 'dark'
-            ? 'bg-neutral-800/80 border border-neutral-700 text-white hover:bg-neutral-700/90'
-            : 'bg-white/90 border border-zinc-250 text-zinc-800 hover:bg-zinc-50'
-        }`}
-        title={deferredPrompt ? "Install SKS-Master PWA" : "SKS-Master PWA Aktif"}
+      {/* Samsung Edge Panel PWA Install */}
+      <div
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        style={{
+          transform: `translateY(-50%) translateX(${
+            isDragging
+              ? isOpen
+                ? Math.max(0, Math.min(170, -dragDistance))
+                : Math.max(0, Math.min(170, 170 - dragDistance))
+              : isOpen
+              ? 0
+              : 170
+          }px)`,
+          transition: isDragging ? 'none' : 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+        }}
+        className="fixed right-0 top-1/2 z-50 flex items-center select-none cursor-grab active:cursor-grabbing"
       >
-        <Download className={`w-5 h-5 shrink-0 animate-bounce ${
-          theme === 'dark' ? 'text-white' : 'text-zinc-800'
-        }`} />
-        {deferredPrompt && (
-          <span className="text-xs font-black whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            Install Aplikasi
-          </span>
-        )}
-      </button>
+        {/* Handle Bar */}
+        <div 
+          className={`w-1.5 h-16 rounded-l-md transition-colors ${
+            theme === 'dark' 
+              ? 'bg-neutral-500/40 hover:bg-neutral-400/60' 
+              : 'bg-neutral-400/40 hover:bg-neutral-500/60'
+          }`}
+          title="Geser ke kiri untuk PWA"
+        />
+
+        {/* Panel Content */}
+        <div
+          onClick={handleInstallPWA}
+          className={`w-[170px] h-16 rounded-l-2xl backdrop-blur-md shadow-2xl flex items-center gap-3 px-4 border-l border-y transition-all ${
+            theme === 'dark'
+              ? 'bg-neutral-900/90 border-neutral-700 text-white hover:bg-neutral-800/90'
+              : 'bg-white/95 border-zinc-200 text-zinc-800 hover:bg-zinc-50'
+          }`}
+        >
+          <Download className={`w-5 h-5 shrink-0 animate-bounce ${
+            theme === 'dark' ? 'text-white' : 'text-zinc-800'
+          }`} />
+          <div className="flex flex-col">
+            <span className="text-[11px] font-black tracking-wide uppercase opacity-75">SKS-Master</span>
+            <span className="text-xs font-black">Install Aplikasi</span>
+          </div>
+          
+          {/* Close button inside the panel */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsOpen(false);
+            }}
+            className={`ml-auto p-1 rounded-full transition-colors flex items-center justify-center ${
+              theme === 'dark' ? 'hover:bg-zinc-700 text-zinc-400 hover:text-white' : 'hover:bg-zinc-200 text-zinc-500 hover:text-black'
+            }`}
+            title="Sembunyikan panel"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
