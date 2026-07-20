@@ -107,11 +107,11 @@ export default function Dashboard() {
     if (!isDragging) return;
     setIsDragging(false);
     if (isOpen) {
-      if (dragDistance < -35) {
+      if (dragDistance < -20) {
         setIsOpen(false);
       }
     } else {
-      if (dragDistance > 35) {
+      if (dragDistance > 20) {
         setIsOpen(true);
       }
     }
@@ -138,9 +138,9 @@ export default function Dashboard() {
     if (!isDragging) return;
     setIsDragging(false);
     if (isOpen) {
-      if (dragDistance < -35) setIsOpen(false);
+      if (dragDistance < -20) setIsOpen(false);
     } else {
-      if (dragDistance > 35) setIsOpen(true);
+      if (dragDistance > 20) setIsOpen(true);
     }
     setDragDistance(0);
   };
