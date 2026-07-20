@@ -1488,17 +1488,17 @@ export default function Dashboard() {
       <button
         type="button"
         onClick={handleInstallPWA}
-        className={`fixed bottom-8 right-8 z-50 group flex items-center justify-center gap-2.5 h-12 rounded-full transition-all duration-300 ease-in-out cursor-pointer w-12 overflow-hidden whitespace-nowrap bg-transparent border border-transparent px-3.5 shadow-none ${
-          deferredPrompt ? 'hover:w-[160px] hover:justify-start hover:shadow-xl' : 'hover:scale-110'
+        className={`fixed bottom-8 right-8 z-50 group flex items-center justify-center gap-2.5 h-12 rounded-full transition-all duration-300 ease-in-out cursor-pointer w-12 overflow-hidden whitespace-nowrap backdrop-blur-sm px-3.5 shadow-lg ${
+          deferredPrompt ? 'hover:w-[160px] hover:justify-start hover:shadow-xl' : 'hover:scale-105'
         } ${
           theme === 'dark'
-            ? 'hover:bg-zinc-900/90 hover:border-zinc-800 text-zinc-300 hover:text-white'
-            : 'hover:bg-white/90 hover:border-zinc-250 text-zinc-650 hover:text-black'
+            ? 'bg-neutral-800/80 border border-neutral-700 text-white hover:bg-neutral-700/90'
+            : 'bg-white/90 border border-zinc-250 text-zinc-800 hover:bg-zinc-50'
         }`}
         title={deferredPrompt ? "Install SKS-Master PWA" : "SKS-Master PWA Aktif"}
       >
         <Download className={`w-5 h-5 shrink-0 animate-bounce ${
-          theme === 'dark' ? 'text-zinc-200' : 'text-zinc-800'
+          theme === 'dark' ? 'text-white' : 'text-zinc-800'
         }`} />
         {deferredPrompt && (
           <span className="text-xs font-black whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
