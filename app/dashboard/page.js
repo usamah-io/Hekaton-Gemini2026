@@ -468,7 +468,7 @@ export default function Dashboard() {
               </button>
             )}
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-gemini-gradient shadow-[0_0_6px_rgba(255,78,78,0.4)]"></span>
+              <span className="w-2.5 h-2.5 rounded-full bg-[#4285F4] shadow-[0_0_6px_rgba(66,133,244,0.4)]"></span>
               <h1 className={`text-xl font-bold tracking-tight bg-gradient-to-r bg-clip-text text-transparent transition-colors duration-300 ${
                 theme === 'dark' ? 'from-white via-zinc-200 to-zinc-400' : 'from-zinc-950 via-zinc-800 to-zinc-600'
               }`}>
