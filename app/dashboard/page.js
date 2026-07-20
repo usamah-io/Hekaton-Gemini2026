@@ -1566,11 +1566,11 @@ export default function Dashboard() {
           transform: `translateY(-50%) translateX(${
             isDragging
               ? isOpen
-                ? Math.max(0, Math.min(170, -dragDistance))
-                : Math.max(0, Math.min(170, 170 - dragDistance))
+                ? Math.max(0, Math.min(130, -dragDistance))
+                : Math.max(0, Math.min(130, 130 - dragDistance))
               : isOpen
               ? 0
-              : 170
+              : 130
           }px)`,
           transition: isDragging ? 'none' : 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
         }}
@@ -1589,19 +1589,16 @@ export default function Dashboard() {
         {/* Panel Content */}
         <div
           onClick={handleInstallPWA}
-          className={`w-[170px] h-16 rounded-l-2xl backdrop-blur-md shadow-2xl flex items-center gap-3 px-4 border-l border-y transition-all ${
+          className={`w-[130px] h-16 rounded-l-2xl backdrop-blur-md shadow-2xl flex items-center gap-2 px-3 border-l border-y transition-all ${
             theme === 'dark'
               ? 'bg-neutral-900/90 border-neutral-700 text-white hover:bg-neutral-800/90'
               : 'bg-white/95 border-zinc-200 text-zinc-800 hover:bg-zinc-50'
           }`}
         >
-          <Download className={`w-5 h-5 shrink-0 animate-bounce ${
-            theme === 'dark' ? 'text-white' : 'text-zinc-800'
+          <Download className={`w-4 h-4 shrink-0 animate-bounce ${
+            theme === 'dark' ? 'text-white' : 'text-zinc-850'
           }`} />
-          <div className="flex flex-col">
-            <span className="text-[11px] font-black tracking-wide uppercase opacity-75">SKS-Master</span>
-            <span className="text-xs font-black">Install Aplikasi</span>
-          </div>
+          <span className="text-xs font-black tracking-wide">Install</span>
           
           {/* Close button inside the panel */}
           <button
@@ -1615,7 +1612,7 @@ export default function Dashboard() {
             }`}
             title="Sembunyikan panel"
           >
-            <X className="w-3.5 h-3.5" />
+            <X className="w-3 h-3" />
           </button>
         </div>
       </div>
