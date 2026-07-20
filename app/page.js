@@ -22,6 +22,7 @@ export default function Home() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [startX, setStartX] = useState(0);
+  const [isInstalled, setIsInstalled] = useState(false);
 
   const handleTouchStart = (e) => {
     setStartX(e.touches[0].clientX);
@@ -60,13 +61,20 @@ export default function Home() {
         .catch((err) => console.error('PWA Service Worker registration failed:', err));
     }
 
-    // 3. PWA beforeinstallprompt Listener
+    // 3. PWA Standalone Detection
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    if (isStandalone) {
+      setIsInstalled(true);
+    }
+
+    // 4. PWA beforeinstallprompt Listener
     const handleBeforeInstallPrompt = (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
     };
 
     const handleAppInstalled = () => {
+      setIsInstalled(true);
       setDeferredPrompt(null);
       console.log('SKS-Master PWA successfully installed!');
     };
@@ -384,74 +392,78 @@ export default function Home() {
       }`}>
         <p className="max-w-6xl mx-auto">&copy; 2026 SKS-Master. Dibuat untuk Gemini Innovation Hackathon 2026. Melaju kencang dengan AI.</p>
       </footer>
-      {/* Desktop Floating PWA Install Button */}
-      <button
-        type="button"
-        onClick={handleInstallPWA}
-        className={`hidden md:flex fixed bottom-8 right-8 z-50 group items-center justify-start gap-2.5 h-12 rounded-full transition-all duration-300 ease-in-out cursor-pointer overflow-hidden whitespace-nowrap backdrop-blur-sm px-3.5 shadow-lg w-12 hover:w-[176px] ${
-          theme === 'dark'
-            ? 'bg-neutral-800/80 border border-neutral-700 text-white hover:bg-neutral-700/90'
-            : 'bg-white/90 border border-zinc-250 text-zinc-800 hover:bg-zinc-50'
-        }`}
-        title={deferredPrompt ? "Install SKS-Master PWA" : "SKS-Master PWA Aktif"}
-      >
-        <Download className={`w-5 h-5 shrink-0 animate-bounce ${
-          theme === 'dark' ? 'text-white' : 'text-zinc-800'
-        }`} />
-        <span className="text-xs font-black whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          Install Aplikasi
-        </span>
-      </button>
-
-      {/* Mobile Samsung Edge Panel PWA Install */}
-      <div
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        className={`md:hidden fixed right-0 top-1/2 z-50 flex items-center select-none transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : 'translate-x-[122px]'
-        }`}
-      >
-        {/* Handle Bar */}
-        <div 
-          onClick={() => setIsOpen(true)}
-          className={`w-2 h-16 rounded-l-md transition-colors cursor-pointer ${
-            theme === 'dark' 
-              ? 'bg-neutral-500/40 hover:bg-neutral-400/60' 
-              : 'bg-neutral-400/40 hover:bg-neutral-500/60'
-          }`}
-          title="Ketuk atau geser ke kiri untuk PWA"
-        />
-
-        {/* Panel Content */}
-        <div
-          onClick={handleInstallPWA}
-          className={`w-[130px] h-16 rounded-l-2xl backdrop-blur-md shadow-2xl flex items-center gap-2 px-3 border-l border-y transition-all ${
-            theme === 'dark'
-              ? 'bg-neutral-900/90 border-neutral-700 text-white hover:bg-neutral-800/90'
-              : 'bg-white/95 border-zinc-200 text-zinc-800 hover:bg-zinc-50'
-          }`}
-        >
-          <Download className={`w-4 h-4 shrink-0 animate-bounce ${
-            theme === 'dark' ? 'text-white' : 'text-zinc-850'
-          }`} />
-          <span className="text-xs font-black tracking-wide">Install</span>
-          
-          {/* Close button inside the panel */}
+      {!(isInstalled || !deferredPrompt) && (
+        <>
+          {/* Desktop Floating PWA Install Button */}
           <button
             type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsOpen(false);
-            }}
-            className={`ml-auto p-1 rounded-full transition-colors flex items-center justify-center ${
-              theme === 'dark' ? 'hover:bg-zinc-700 text-zinc-400 hover:text-white' : 'hover:bg-zinc-200 text-zinc-500 hover:text-black'
+            onClick={handleInstallPWA}
+            className={`hidden md:flex fixed bottom-8 right-8 z-50 group items-center justify-start gap-2.5 h-12 rounded-full transition-all duration-300 ease-in-out cursor-pointer overflow-hidden whitespace-nowrap backdrop-blur-sm px-3.5 shadow-lg w-12 hover:w-[176px] ${
+              theme === 'dark'
+                ? 'bg-neutral-800/80 border border-neutral-700 text-white hover:bg-neutral-700/90'
+                : 'bg-white/90 border border-zinc-250 text-zinc-800 hover:bg-zinc-50'
             }`}
-            title="Sembunyikan panel"
+            title={deferredPrompt ? "Install SKS-Master PWA" : "SKS-Master PWA Aktif"}
           >
-            <X className="w-3 h-3" />
+            <Download className={`w-5 h-5 shrink-0 animate-bounce ${
+              theme === 'dark' ? 'text-white' : 'text-zinc-800'
+            }`} />
+            <span className="text-xs font-black whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              Install Aplikasi
+            </span>
           </button>
-        </div>
-      </div>
+
+          {/* Mobile Samsung Edge Panel PWA Install */}
+          <div
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            className={`md:hidden fixed right-0 top-1/2 z-50 flex items-center select-none transition-transform duration-300 ease-in-out ${
+              isOpen ? 'translate-x-0' : 'translate-x-[122px]'
+            }`}
+          >
+            {/* Handle Bar */}
+            <div 
+              onClick={() => setIsOpen(true)}
+              className={`w-2 h-16 rounded-l-md transition-colors cursor-pointer ${
+                theme === 'dark' 
+                  ? 'bg-neutral-500/40 hover:bg-neutral-400/60' 
+                  : 'bg-neutral-400/40 hover:bg-neutral-500/60'
+              }`}
+              title="Ketuk atau geser ke kiri untuk PWA"
+            />
+
+            {/* Panel Content */}
+            <div
+              onClick={handleInstallPWA}
+              className={`w-[130px] h-16 rounded-l-2xl backdrop-blur-md shadow-2xl flex items-center gap-2 px-3 border-l border-y transition-all ${
+                theme === 'dark'
+                  ? 'bg-neutral-900/90 border-neutral-700 text-white hover:bg-neutral-800/90'
+                  : 'bg-white/95 border-zinc-200 text-zinc-800 hover:bg-zinc-50'
+              }`}
+            >
+              <Download className={`w-4 h-4 shrink-0 animate-bounce ${
+                theme === 'dark' ? 'text-white' : 'text-zinc-850'
+              }`} />
+              <span className="text-xs font-black tracking-wide">Install</span>
+              
+              {/* Close button inside the panel */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsOpen(false);
+                }}
+                className={`ml-auto p-1 rounded-full transition-colors flex items-center justify-center ${
+                  theme === 'dark' ? 'hover:bg-zinc-700 text-zinc-400 hover:text-white' : 'hover:bg-zinc-200 text-zinc-500 hover:text-black'
+                }`}
+                title="Sembunyikan panel"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
