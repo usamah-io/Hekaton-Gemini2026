@@ -1,0 +1,2 @@
+Placeholder PWA icons are included as icon-192x192.png and icon-512x512.png.
+To use a custom app icon, replace these files in the public/ folder with your own PNG assets.

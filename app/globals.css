@@ -22,5 +22,38 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* --- GEMINI OFFICIAL BRAND GRADIENT UTILITIES --- */
+
+/* 1. Background Gradient (Horizontal: Red -> Yellow -> Green -> Blue) */
+.bg-gemini-gradient {
+  background: linear-gradient(90deg, #FF4E4E 0%, #FFB700 30%, #00E676 70%, #1A73E8 100%) !important;
+}
+
+/* 2. Heading Text Gradient (Orange -> Green -> Blue) */
+.text-gemini-gradient {
+  background: linear-gradient(90deg, #FFB700 0%, #00E676 50%, #1A73E8 100%);
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  color: transparent !important;
+}
+
+/* 3. Card Top Thin Border Accent */
+.card-gemini-accent {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-gemini-accent::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #FF4E4E 0%, #FFB700 30%, #00E676 70%, #1A73E8 100%);
+  z-index: 10;
 }
