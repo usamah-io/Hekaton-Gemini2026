@@ -1296,7 +1296,7 @@ export default function Dashboard() {
               <AlertCircle className="w-6 h-6 animate-pulse" />
             </div>
             <div className="space-y-1.5">
-              <h3 className={`text-lg font-bold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-zinc-950'}`}>⚠️ Peringatan Integritas!</h3>
+              <h3 className={`text-lg font-bold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-zinc-950'}`}>Peringatan Integritas!</h3>
               <p className="text-xs text-zinc-400 font-medium">
                 Ujian ini mewajibkan mode Fullscreen aktif untuk mencegah kecurangan.
               </p>
@@ -1330,7 +1330,7 @@ export default function Dashboard() {
               <XCircle className="w-6 h-6 animate-bounce" />
             </div>
             <div className="space-y-1.5">
-              <h3 className={`text-lg font-bold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-zinc-950'}`}>🚨 Kuis Dibatalkan!</h3>
+              <h3 className={`text-lg font-bold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-zinc-950'}`}>Kuis Dibatalkan!</h3>
               <p className="text-xs text-zinc-400 font-medium">
                 Anda terdeteksi melanggar batas keamanan kuis sebanyak 3 kali secara beruntun.
               </p>
