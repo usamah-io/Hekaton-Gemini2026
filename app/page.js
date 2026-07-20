@@ -22,70 +22,27 @@ export default function Home() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [startX, setStartX] = useState(0);
-  const [dragDistance, setDragDistance] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
 
   const handleTouchStart = (e) => {
     setStartX(e.touches[0].clientX);
-    setIsDragging(true);
-    setDragDistance(0);
   };
 
   const handleTouchMove = (e) => {
-    if (!isDragging) return;
     const currentX = e.touches[0].clientX;
     const diff = startX - currentX; // Dragging left is positive
-    if (isOpen) {
-      if (diff < 0) {
-        setDragDistance(diff);
-      }
-    } else {
-      if (diff > 0) {
-        setDragDistance(diff);
-      }
+    
+    // Swipe left to open
+    if (!isOpen && diff > 10) {
+      if (e.cancelable) e.preventDefault();
+      e.stopPropagation();
+      setIsOpen(true);
     }
-  };
-
-  const handleTouchEnd = () => {
-    if (!isDragging) return;
-    setIsDragging(false);
-    if (isOpen) {
-      if (dragDistance < -20) {
-        setIsOpen(false);
-      }
-    } else {
-      if (dragDistance > 20) {
-        setIsOpen(true);
-      }
+    // Swipe right to close
+    if (isOpen && diff < -10) {
+      if (e.cancelable) e.preventDefault();
+      e.stopPropagation();
+      setIsOpen(false);
     }
-    setDragDistance(0);
-  };
-
-  const handleMouseDown = (e) => {
-    setStartX(e.clientX);
-    setIsDragging(true);
-    setDragDistance(0);
-  };
-
-  const handleMouseMove = (e) => {
-    if (!isDragging) return;
-    const diff = startX - e.clientX;
-    if (isOpen) {
-      if (diff < 0) setDragDistance(diff);
-    } else {
-      if (diff > 0) setDragDistance(diff);
-    }
-  };
-
-  const handleMouseUp = () => {
-    if (!isDragging) return;
-    setIsDragging(false);
-    if (isOpen) {
-      if (dragDistance < -20) setIsOpen(false);
-    } else {
-      if (dragDistance > 20) setIsOpen(true);
-    }
-    setDragDistance(0);
   };
 
   // Load theme and setup SW/PWA Listeners
@@ -450,33 +407,19 @@ export default function Home() {
       <div
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-        style={{
-          transform: `translateY(-50%) translateX(${
-            isDragging
-              ? isOpen
-                ? Math.max(0, Math.min(130, -dragDistance))
-                : Math.max(0, Math.min(130, 130 - dragDistance))
-              : isOpen
-              ? 0
-              : 130
-          }px)`,
-          transition: isDragging ? 'none' : 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
-        }}
-        className="md:hidden fixed right-0 top-1/2 z-50 flex items-center select-none cursor-grab active:cursor-grabbing"
+        className={`md:hidden fixed right-0 top-1/2 z-50 flex items-center select-none transition-transform duration-300 ease-in-out ${
+          isOpen ? 'translate-x-0' : 'translate-x-[122px]'
+        }`}
       >
         {/* Handle Bar */}
         <div 
-          className={`w-1.5 h-16 rounded-l-md transition-colors ${
+          onClick={() => setIsOpen(true)}
+          className={`w-2 h-16 rounded-l-md transition-colors cursor-pointer ${
             theme === 'dark' 
               ? 'bg-neutral-500/40 hover:bg-neutral-400/60' 
               : 'bg-neutral-400/40 hover:bg-neutral-500/60'
           }`}
-          title="Geser ke kiri untuk PWA"
+          title="Ketuk atau geser ke kiri untuk PWA"
         />
 
         {/* Panel Content */}
