@@ -1485,23 +1485,26 @@ export default function Dashboard() {
           </div>
         </div>
       )}
-      {/* Custom Floating PWA Install Button */}
       <button
         type="button"
         onClick={handleInstallPWA}
-        className={`fixed bottom-8 right-8 z-50 group flex items-center justify-center hover:justify-start gap-2.5 h-12 rounded-full transition-all duration-300 ease-in-out cursor-pointer w-12 hover:w-[160px] overflow-hidden whitespace-nowrap bg-transparent border border-transparent px-3.5 shadow-none hover:shadow-xl ${
+        className={`fixed bottom-8 right-8 z-50 group flex items-center justify-center gap-2.5 h-12 rounded-full transition-all duration-300 ease-in-out cursor-pointer w-12 overflow-hidden whitespace-nowrap bg-transparent border border-transparent px-3.5 shadow-none ${
+          deferredPrompt ? 'hover:w-[160px] hover:justify-start hover:shadow-xl' : 'hover:scale-110'
+        } ${
           theme === 'dark'
             ? 'hover:bg-zinc-900/90 hover:border-zinc-800 text-zinc-300 hover:text-white'
             : 'hover:bg-white/90 hover:border-zinc-250 text-zinc-650 hover:text-black'
         }`}
-        title="Install SKS-Master PWA"
+        title={deferredPrompt ? "Install SKS-Master PWA" : "SKS-Master PWA Aktif"}
       >
-        <Download className={`w-4.5 h-4.5 shrink-0 animate-bounce ${
-          theme === 'dark' ? 'text-blue-400' : 'text-blue-500'
+        <Download className={`w-5 h-5 shrink-0 animate-bounce ${
+          theme === 'dark' ? 'text-zinc-200' : 'text-zinc-800'
         }`} />
-        <span className="text-xs font-black whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          Install Aplikasi
-        </span>
+        {deferredPrompt && (
+          <span className="text-xs font-black whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            Install Aplikasi
+          </span>
+        )}
       </button>
     </div>
   );
