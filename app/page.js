@@ -354,10 +354,16 @@ export default function Home() {
         <button
           type="button"
           onClick={handleInstallPWA}
-          className="fixed bottom-8 right-8 z-50 group flex items-center justify-center hover:justify-start gap-2.5 h-12 rounded-full transition-all duration-300 ease-in-out cursor-pointer shadow-xl hover:scale-[1.05] active:scale-[0.95] w-12 hover:w-[160px] overflow-hidden whitespace-nowrap bg-gemini-gradient text-white border border-white/20 px-3.5"
+          className={`fixed bottom-8 right-8 z-50 group flex items-center justify-center hover:justify-start gap-2.5 h-12 rounded-full transition-all duration-300 ease-in-out cursor-pointer w-12 hover:w-[160px] overflow-hidden whitespace-nowrap bg-transparent border border-transparent px-3.5 shadow-none hover:shadow-xl ${
+            theme === 'dark'
+              ? 'hover:bg-zinc-900/90 hover:border-zinc-800 text-zinc-300 hover:text-white'
+              : 'hover:bg-white/90 hover:border-zinc-250 text-zinc-650 hover:text-black'
+          }`}
           title="Install SKS-Master PWA"
         >
-          <Download className="w-4.5 h-4.5 shrink-0 text-white animate-bounce" />
+          <Download className={`w-4.5 h-4.5 shrink-0 animate-bounce ${
+            theme === 'dark' ? 'text-blue-400' : 'text-blue-500'
+          }`} />
           <span className="text-xs font-black whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             Install Aplikasi
           </span>
