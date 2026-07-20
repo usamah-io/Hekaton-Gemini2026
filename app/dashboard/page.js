@@ -395,6 +395,57 @@ export default function Dashboard() {
     URL.revokeObjectURL(url);
   };
 
+  const handleExportSingleSession = (item) => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(item, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href",     dataStr);
+    downloadAnchor.setAttribute("download", `sks-master-sesi-${item.id}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+  };
+
+  const handleImportSingleSession = (e) => {
+    const fileReader = new FileReader();
+    const file = e.target.files[0];
+    if (!file) return;
+
+    fileReader.onload = (event) => {
+      try {
+        const importedSession = JSON.parse(event.target.result);
+        
+        if (!importedSession.id || !importedSession.subject || !importedSession.skor || !importedSession.jumlahSoal) {
+          alert("Gagal mengimpor: Struktur berkas kuis JSON tidak valid.");
+          return;
+        }
+
+        const savedHist = localStorage.getItem('sks_master_history');
+        let currentHist = [];
+        if (savedHist) {
+          try {
+            currentHist = JSON.parse(savedHist);
+          } catch (err) {
+            console.error(err);
+          }
+        }
+
+        const isDuplicate = currentHist.some(item => item.id === importedSession.id);
+        if (isDuplicate) {
+          importedSession.id = Date.now();
+        }
+
+        const newHist = [importedSession, ...currentHist];
+        localStorage.setItem('sks_master_history', JSON.stringify(newHist));
+        setHistoryList(newHist);
+        alert(`Berhasil mengimpor sesi kuis: "${importedSession.subject}"!`);
+      } catch (err) {
+        alert("Gagal membaca berkas: File bukan berformat JSON yang valid.");
+      }
+    };
+    fileReader.readAsText(file);
+    e.target.value = null;
+  };
+
   const handleInstallPWA = async () => {
     if (deferredPrompt) {
       deferredPrompt.prompt();
@@ -830,21 +881,42 @@ export default function Dashboard() {
                     <div className={`backdrop-blur-xl border rounded-2xl p-6 shadow-2xl transition-colors duration-300 card-gemini-accent ${
                       theme === 'dark' ? 'bg-zinc-900/60 border-zinc-800/80' : 'bg-white border-zinc-200'
                     }`}>
-                      <div className="flex items-center justify-between border-b border-zinc-805/40 pb-4 mb-6 gap-3">
+                      <div className="flex items-center justify-between border-b border-zinc-805/40 pb-4 mb-6 gap-3 flex-wrap">
                         <div className="flex items-center gap-2">
-                          <ListTodo className="w-5 h-5 text-blue-500" />
-                          <h3 className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-zinc-950'}`}>Daftar Log Nilai Ujian</h3>
+                          <ListTodo className="w-5 h-5 text-[#4285F4]" />
+                          <h3 className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-zinc-955'}`}>Daftar Log Nilai Ujian</h3>
                         </div>
-                        {totalQuizzes > 0 && (
-                          <button
-                            type="button"
-                            onClick={handleClearHistory}
-                            className="text-xs text-rose-500 hover:text-rose-400 font-bold flex items-center gap-1.5 px-3 py-2 hover:bg-rose-500/5 rounded-lg border border-transparent hover:border-rose-500/20 transition-all cursor-pointer"
+                        <div className="flex items-center gap-2 flex-wrap">
+                          {/* File input invisible */}
+                          <input
+                            type="file"
+                            id="import-single-session-file"
+                            accept=".json"
+                            onChange={handleImportSingleSession}
+                            className="hidden"
+                          />
+                          <label
+                            htmlFor="import-single-session-file"
+                            className={`text-xs font-bold flex items-center gap-1.5 px-3 py-2 border rounded-lg transition-all cursor-pointer ${
+                              theme === 'dark'
+                                ? 'text-[#4285F4] border-[#4285F4]/30 hover:bg-[#4285F4]/10'
+                                : 'text-[#4285F4] border-[#4285F4]/40 hover:bg-[#4285F4]/5'
+                            }`}
                           >
-                            <Trash2 className="w-3.5 h-3.5" />
-                            Hapus Semua
-                          </button>
-                        )}
+                            <Download className="w-3.5 h-3.5 rotate-180 text-[#4285F4]" />
+                            Unggah Riwayat Sesi (.json)
+                          </label>
+                          {totalQuizzes > 0 && (
+                            <button
+                              type="button"
+                              onClick={handleClearHistory}
+                              className="text-xs text-rose-500 hover:text-rose-400 font-bold flex items-center gap-1.5 px-3 py-2 hover:bg-rose-500/5 rounded-lg border border-transparent hover:border-rose-500/20 transition-all cursor-pointer"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                              Hapus Semua
+                            </button>
+                          )}
+                        </div>
                       </div>
 
                       {totalQuizzes === 0 ? (
@@ -867,17 +939,19 @@ export default function Dashboard() {
                       ) : (
                         <div className="space-y-4">
                           {historyList.map((item) => (
-                            <button 
+                            <div 
                               key={item.id}
-                              type="button"
-                              onClick={() => setSelectedHistoryItem(item)}
-                              className={`w-full text-left p-4 rounded-xl border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all hover:translate-x-1 cursor-pointer hover:shadow-lg ${
+                              className={`w-full p-4 rounded-xl border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all hover:translate-x-1 hover:shadow-lg ${
                                 theme === 'dark' 
                                   ? 'bg-zinc-950/40 border-zinc-850 hover:bg-zinc-900/40 hover:border-zinc-700' 
                                   : 'bg-zinc-101/50 border-zinc-200 hover:bg-zinc-102 hover:border-zinc-300'
                               }`}
                             >
-                              <div className="space-y-1">
+                              {/* Left Clickable Area */}
+                              <div 
+                                onClick={() => setSelectedHistoryItem(item)}
+                                className="flex-1 space-y-1 cursor-pointer"
+                              >
                                 <div className="flex items-center gap-2 flex-wrap">
                                   <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${
                                     item.difficulty === 'Sulit' 
@@ -896,7 +970,8 @@ export default function Dashboard() {
                                 </h4>
                               </div>
 
-                              <div className="flex items-center gap-4">
+                              {/* Right Info and Actions */}
+                              <div className="flex items-center justify-between md:justify-end gap-4 flex-wrap">
                                 <div className="w-24 hidden sm:block">
                                   <div className="flex justify-between text-[10px] text-zinc-400 mb-1">
                                     <span>Akurasi</span>
@@ -915,8 +990,25 @@ export default function Dashboard() {
                                     {getMotivationalFeedback(item.percent).title}
                                   </div>
                                 </div>
+
+                                {/* Export Single Item Action Button */}
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleExportSingleSession(item);
+                                  }}
+                                  className={`p-2 rounded-lg border transition-all cursor-pointer ${
+                                    theme === 'dark'
+                                      ? 'text-[#4285F4] border-[#4285F4]/20 hover:bg-[#4285F4]/10'
+                                      : 'text-[#4285F4] border-[#4285F4]/30 hover:bg-[#4285F4]/5'
+                                  }`}
+                                  title="Ekspor Sesi Ini (.json)"
+                                >
+                                  <Download className="w-4 h-4 text-[#4285F4]" />
+                                </button>
                               </div>
-                            </button>
+                            </div>
                           ))}
                         </div>
                       )}
