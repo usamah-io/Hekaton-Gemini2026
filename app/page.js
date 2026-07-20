@@ -96,9 +96,16 @@ export default function Home() {
       }`}>
         <div className="max-w-6xl mx-auto w-full flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#4285F4] shadow-[0_0_8px_rgba(66,133,244,0.5)]"></span>
-            <span className={`font-bold text-lg tracking-tight bg-gradient-to-r bg-clip-text text-transparent transition-colors duration-300 ${
-              theme === 'dark' ? 'from-white to-zinc-400' : 'from-zinc-950 to-zinc-700'
+            {/* Minimalist Logo */}
+            <span className="w-2.5 h-2.5 rounded-full bg-[#4285F4] shrink-0"></span>
+            <div className="flex h-2.5 rounded-[1.5px] overflow-hidden shrink-0">
+              <span className="w-2.5 h-full bg-[#4285F4]"></span>
+              <span className="w-2.5 h-full bg-[#0F9D58]"></span>
+              <span className="w-2.5 h-full bg-[#F4B400]"></span>
+              <span className="w-2.5 h-full bg-[#DB4437]"></span>
+            </div>
+            <span className={`font-bold text-lg tracking-tight transition-colors duration-300 ${
+              theme === 'dark' ? 'text-white' : 'text-zinc-900'
             }`}>
               SKS-Master
             </span>
