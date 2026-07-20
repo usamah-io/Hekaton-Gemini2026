@@ -443,7 +443,22 @@ export default function Dashboard() {
       }
     };
     fileReader.readAsText(file);
-    e.target.value = null;
+  };
+
+  const handleDeleteSingleSession = (id) => {
+    if (confirm("Apakah Anda yakin ingin menghapus riwayat sesi kuis ini?")) {
+      const savedHist = localStorage.getItem('sks_master_history');
+      if (savedHist) {
+        try {
+          const currentHist = JSON.parse(savedHist);
+          const newHist = currentHist.filter(item => item.id !== id);
+          localStorage.setItem('sks_master_history', JSON.stringify(newHist));
+          setHistoryList(newHist);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    }
   };
 
   const handleInstallPWA = async () => {
@@ -991,22 +1006,42 @@ export default function Dashboard() {
                                   </div>
                                 </div>
 
-                                {/* Export Single Item Action Button */}
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleExportSingleSession(item);
-                                  }}
-                                  className={`p-2 rounded-lg border transition-all cursor-pointer ${
-                                    theme === 'dark'
-                                      ? 'text-[#4285F4] border-[#4285F4]/20 hover:bg-[#4285F4]/10'
-                                      : 'text-[#4285F4] border-[#4285F4]/30 hover:bg-[#4285F4]/5'
-                                  }`}
-                                  title="Ekspor Sesi Ini (.json)"
-                                >
-                                  <Download className="w-4 h-4 text-[#4285F4]" />
-                                </button>
+                                {/* Actions container aligned vertically */}
+                                <div className="flex flex-col gap-1.5 items-center justify-center">
+                                  {/* Delete Single Item Button */}
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleDeleteSingleSession(item.id);
+                                    }}
+                                    className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
+                                      theme === 'dark'
+                                        ? 'text-zinc-450 border-transparent hover:text-[#DB4437] hover:bg-rose-500/10 hover:border-rose-500/20'
+                                        : 'text-zinc-500 border-transparent hover:text-[#DB4437] hover:bg-rose-500/5 hover:border-rose-200'
+                                    }`}
+                                    title="Hapus Sesi Ini"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+
+                                  {/* Export Single Item Action Button */}
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleExportSingleSession(item);
+                                    }}
+                                    className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
+                                      theme === 'dark'
+                                        ? 'text-[#4285F4] border-transparent hover:bg-[#4285F4]/10 hover:border-[#4285F4]/20'
+                                        : 'text-[#4285F4] border-transparent hover:bg-[#4285F4]/5 hover:border-blue-200'
+                                    }`}
+                                    title="Ekspor Sesi Ini (.json)"
+                                  >
+                                    <Download className="w-3.5 h-3.5 text-[#4285F4]" />
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           ))}
