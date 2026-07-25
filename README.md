@@ -33,7 +33,7 @@
 
 Aplikasi SKS-Master bekerja menggunakan arsitektur aliran data *Serverless-to-Client* yang efisien.
 
-![Preview](ssan data flow.png)
+![Preview](ssan-data-flow.png)
 
 ### Penjelasan Deteksi Jaringan / API Key:
 1.  **Online Mode**: Jika `GEMINI_API_KEY` terkonfigurasi, aplikasi memanfaatkan kecerdasan model generatif untuk meracik pertanyaan unik dari subjek apa pun.
