@@ -33,23 +33,7 @@
 
 Aplikasi SKS-Master bekerja menggunakan arsitektur aliran data *Serverless-to-Client* yang efisien.
 
-```mermaid
-graph TD
-    User([Pengguna / HP / Laptop]) -->|1. Pilih Kuis & Kesulitan| FE[Frontend React: app/dashboard/page.js]
-    FE -->|2. Panggil Server Action| BE[Server Action: app/actions.js]
-    
-    subgraph Sisi Server
-        BE -->|3. Deteksi API Key| KeyCheck{API Key Aktif?}
-        KeyCheck -->|Ya| Gemini[Gemini 2.5 API]
-        KeyCheck -->|Tidak| DB[Bank Soal Offline Lokal]
-        Gemini -->|4a. Respon Format JSON| BE
-        DB -->|4b. Filter Kesulitan & Slice Soal| BE
-        BE -->|5. Pengacakan Fisher-Yates| Shuffle[shuffleQuestionOptions Helper]
-    end
-    
-    Shuffle -->|6. Kirim Soal & Opsi Teracak| FE
-    FE -->|7. Simpan Riwayat Nilai| LS[(LocalStorage: sks_master_history)]
-```
+![Preview](ssan data flow.png)
 
 ### Penjelasan Deteksi Jaringan / API Key:
 1.  **Online Mode**: Jika `GEMINI_API_KEY` terkonfigurasi, aplikasi memanfaatkan kecerdasan model generatif untuk meracik pertanyaan unik dari subjek apa pun.
