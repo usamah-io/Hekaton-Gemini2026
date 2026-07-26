@@ -268,8 +268,94 @@ export default function Dashboard() {
     const result = await generateQuiz(subject, questionCount, difficulty);
 
     if (result && result.success) {
-      setQuestions(result.questions);
-      setIsFallback(!!result.isFallback);
+      let finalQuestions = result.questions;
+      let usedLocalBank = false;
+
+      // Fisher-Yates helper function to shuffle questions
+      const fisherYatesShuffle = (array) => {
+        const arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      };
+
+      // Fisher-Yates helper function to shuffle question options and update correct index
+      const shuffleQuestionOptionsLocal = (question) => {
+        const getRawText = (text) => {
+          return text.replace(/^[A-E][\.\)]\s*/, '').trim();
+        };
+
+        const correctRaw = getRawText(question.options[question.correct_answer_index]);
+        const rawOptions = question.options.map(opt => getRawText(opt));
+        
+        for (let i = rawOptions.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [rawOptions[i], rawOptions[j]] = [rawOptions[j], rawOptions[i]];
+        }
+        
+        const prefixes = ["A. ", "B. ", "C. ", "D. ", "E. "];
+        const newOptions = rawOptions.map((raw, idx) => `${prefixes[idx]}${raw}`);
+        const newCorrectIndex = rawOptions.findIndex(raw => raw === correctRaw);
+        
+        return {
+          ...question,
+          options: newOptions,
+          correct_answer_index: newCorrectIndex !== -1 ? newCorrectIndex : 0
+        };
+      };
+
+      // 1. If fallback (offline), try loading questions from LocalStorage bankSoal_{subject}
+      if (result.isFallback) {
+        const localBankStr = localStorage.getItem(`bankSoal_${subject}`);
+        if (localBankStr) {
+          try {
+            const localBank = JSON.parse(localBankStr);
+            // Filter by selected difficulty
+            let matchedQuestions = localBank.filter(q => q.difficulty === difficulty);
+            if (matchedQuestions.length < questionCount) {
+              matchedQuestions = localBank; // Fallback to all difficulties if count is low
+            }
+
+            if (matchedQuestions.length >= 1) {
+              // Shuffle questions list with Fisher-Yates
+              const shuffledList = fisherYatesShuffle(matchedQuestions).slice(0, questionCount);
+              // Shuffle options for each question with Fisher-Yates
+              finalQuestions = shuffledList.map(q => shuffleQuestionOptionsLocal(q));
+              usedLocalBank = true;
+              console.log(`Loaded ${finalQuestions.length} questions from LocalStorage bankSoal_${subject}`);
+            }
+          } catch (e) {
+            console.error("Gagal memuat/parse bankSoal lokal:", e);
+          }
+        }
+      }
+
+      // 2. If successfully fetched from Gemini, merge into LocalStorage bankSoal_{subject}
+      if (!result.isFallback) {
+        const localBankStr = localStorage.getItem(`bankSoal_${subject}`) || '[]';
+        try {
+          const localBank = JSON.parse(localBankStr);
+          result.questions.forEach(newQ => {
+            // Check duplication by question text
+            const isDuplicate = localBank.some(q => q.question.trim().toLowerCase() === newQ.question.trim().toLowerCase());
+            if (!isDuplicate) {
+              localBank.push({
+                ...newQ,
+                difficulty: difficulty
+              });
+            }
+          });
+          localStorage.setItem(`bankSoal_${subject}`, JSON.stringify(localBank));
+          console.log(`Berhasil menggabungkan soal baru ke bankSoal_${subject}. Total: ${localBank.length}`);
+        } catch (e) {
+          console.error("Gagal menggabungkan kuis ke LocalStorage:", e);
+        }
+      }
+
+      setQuestions(finalQuestions);
+      setIsFallback(usedLocalBank ? false : !!result.isFallback);
       setSelectedAnswers({});
       setCurrentQuestionIndex(0);
       setStep('quiz');

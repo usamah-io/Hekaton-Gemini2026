@@ -567,20 +567,6 @@ const getGeminiClient = () => {
   return new GoogleGenAI({ apiKey });
 };
 
-// System Instruction untuk Gemini agar menghasilkan kuis berkualitas tinggi
-const SYSTEM_INSTRUCTION = `Anda adalah ahli akademik dan pembuat soal ujian profesional (seperti UTBK Nasional, SBMPTN, Olimpiade Sains, dan ujian sertifikasi kompetensi).
-
-Tugas Anda adalah memformulasikan soal-soal pilihan ganda yang sangat menantang, akademis, dan mendidik dalam Bahasa Indonesia.
-
-Setiap soal pilihan ganda harus memenuhi kriteria berikut secara mutlak:
-1. Pertanyaan harus berbobot akademis tinggi, logis, dan menguji pemahaman konsep tingkat tinggi (HOTS - Higher Order Thinking Skills), bukan sekadar ingatan atau fakta sederhana.
-2. Pilihan jawaban (options) terdiri dari TEPAT 4 opsi, berformat teks rapi (misal diawali "A. ...", "B. ...", "C. ...", "D. ...").
-3. Pengecoh (distractors) harus dirancang secara akademis, logis, sangat menantang, dan tampak meyakinkan bagi yang tidak memahami konsep secara mendalam. Gunakan kesalahan logika umum, miskonsepsi umum, atau kesalahan perhitungan yang umum terjadi pada siswa untuk opsi pengecoh.
-4. Indeks jawaban benar (correct_answer_index) adalah integer 0 sampai 3, yang menunjuk pada indeks array opsi (0 = opsi pertama, 1 = opsi kedua, dst).
-5. Pembahasan (explanation) harus ditulis secara akademis, mendalam, dan mendidik. Jelaskan mengapa jawaban tersebut benar dan berikan sanggahan mengapa opsi pengecoh lainnya salah secara rasional.
-
-Format keluaran wajib berupa JSON murni tanpa pembungkus markdown (\`\`\`json atau \`\`\`), dan wajib mematuhi skema JSON yang didefinisikan oleh sistem. Jangan mengembalikan teks non-JSON di luar struktur objek tersebut.`;
-
 /**
  * Server Action untuk menghasilkan kuis dari Gemini.
  * Menerima parameter sesuai dengan urutan: subject, jumlahSoal, difficulty.
@@ -600,42 +586,66 @@ export async function generateQuiz(subject, jumlahSoal = 5, difficulty = 'Sedang
       return getFallbackQuiz(subject, limitCount, difficulty);
     }
 
-    const prompt = `Buatkan kuis pilihan ganda sebanyak ${limitCount} soal dengan tingkat kesulitan '${difficulty}' berdasarkan materi tentang subjek "${subject}" dalam bahasa Indonesia. Pastikan Gemini benar-benar menyesuaikan kompleksitas pertanyaan dan pilihan pengecoh jawaban berdasarkan tingkat kesulitan yang diminta (Mudah = dasar/langsung, Sedang = analisis menengah, Sulit = studi kasus/HOTS/analisis mendalam).`;
+    const systemPrompt = `Bertindaklah sebagai pembuat soal akademis profesional untuk platform SKS-Master. Tugasmu adalah membuat set soal kuis pilihan ganda akademis presisi tinggi berdasarkan parameter berikut:
+
+- Subjek: ${subject}
+  (Subjek yang tersedia: 'UTBK Pengetahuan Kuantitatif', 'Ilmu Komputer', 'Sejarah', 'Biologi', 'Kimia')
+- Tingkat Kesulitan: ${difficulty} (Mudah / Sedang / Sulit)
+- Jumlah Soal: ${limitCount}
+
+Panduan Pembuatan Soal Spesifik Subjek:
+1. UTBK Pengetahuan Kuantitatif: Fokus pada pemahaman konsep matematika dasar, aljabar, geometri, aritmatika, analisis data, dan logika angka standar UTBK SNBT.
+2. Ilmu Komputer: Fokus pada dasar pemrograman, struktur data, algoritma, jaringan komputer, database, dan logika komputasional.
+3. Sejarah: Fokus pada sejarah Indonesia dan dunia, analisis sebab-akibat peristiwa sejarah, tokoh, serta kronologi penting.
+4. Biologi: Fokus pada sel, genetika, ekologi, anatomi, fisiologi, evolusi, dan bioteknologi.
+5. Kimia: Fokus pada struktur atom, ikatan kimia, reaksi kimia, stoikiometri, termokimia, dan larutan.
+
+Aturan Wajib (Strict Rules):
+1. SMART DISTRACTORS: Setiap pilihan jawaban salah harus dirancang berdasarkan kesalahan logika/miskonsep umum yang sering terjadi pada pelajar, bukan sekadar jawaban acak yang asal salah.
+2. VARIABILITAS & SEED RANDOM: Gunakan variasi konsep/topik turunan yang luas dalam subjek tersebut. Jangan membuat soal yang mirip atau pernah dibuat sebelumnya.
+3. PEMBAHASAN AKADEMIS: Sertakan pembahasan ringkas namun komprehensif yang menjelaskan akar konsep mengapa jawaban benar itu tepat dan mengapa opsi lain salah.
+4. FORMAT OUTPUT (JSON ONLY): Kembalikan respons murni dalam format array JSON tanpa markdown wrapper seperti \`\`\`json.
+
+Struktur JSON Output:
+[
+  {
+    "id": "skms-{timestamp}-{randomHash}",
+    "question": "Teks pertanyaan...",
+    "options": ["Opsi A", "Opsi B", "Opsi C", "Opsi D"],
+    "correctAnswerIndex": 0,
+    "explanation": "Pembahasan akademis lengkap mengenai akar konsep..."
+  }
+]`;
 
     const responseSchema = {
-      type: "OBJECT",
-      properties: {
-        questions: {
-          type: "ARRAY",
-          items: {
-            type: "OBJECT",
-            properties: {
-              question: { type: "STRING" },
-              options: {
-                type: "ARRAY",
-                items: { type: "STRING" },
-                minItems: 4,
-                maxItems: 4
-              },
-              correct_answer_index: { type: "INTEGER" },
-              explanation: { type: "STRING" }
-            },
-            required: ["question", "options", "correct_answer_index", "explanation"]
-          }
-        }
-      },
-      required: ["questions"]
+      type: "ARRAY",
+      items: {
+        type: "OBJECT",
+        properties: {
+          id: { type: "STRING" },
+          question: { type: "STRING" },
+          options: {
+            type: "ARRAY",
+            items: { type: "STRING" },
+            minItems: 4,
+            maxItems: 4
+          },
+          correctAnswerIndex: { type: "INTEGER" },
+          explanation: { type: "STRING" }
+        },
+        required: ["id", "question", "options", "correctAnswerIndex", "explanation"]
+      }
     };
 
     // Panggil API Gemini dengan model gemini-2.5-flash
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
-      contents: prompt,
+      contents: `Buatkan set kuis akademis pilihan ganda sebanyak ${limitCount} soal untuk subjek "${subject}" dengan tingkat kesulitan "${difficulty}".`,
       config: {
-        systemInstruction: SYSTEM_INSTRUCTION,
+        systemInstruction: systemPrompt,
         responseMimeType: 'application/json',
         responseSchema: responseSchema,
-        temperature: 0.7,
+        temperature: 0.85,
       }
     });
 
@@ -647,13 +657,24 @@ export async function generateQuiz(subject, jumlahSoal = 5, difficulty = 'Sedang
 
     // Parse JSON hasil kembalian
     const data = JSON.parse(responseText.trim());
-    
-    if (!data.questions || !Array.isArray(data.questions) || data.questions.length === 0) {
-      throw new Error('Struktur respons JSON tidak valid (data.questions tidak ditemukan/bukan array).');
+    const rawQuestions = Array.isArray(data) ? data : (data.questions || []);
+
+    if (rawQuestions.length === 0) {
+      throw new Error('Struktur respons JSON tidak valid atau array soal kosong.');
     }
 
-    console.log(`Berhasil men-generate ${data.questions.length} soal menggunakan Gemini AI.`);
-    const shuffledQuestions = data.questions.map(q => shuffleQuestionOptions(q));
+    console.log(`Berhasil men-generate ${rawQuestions.length} soal menggunakan Gemini AI.`);
+    
+    // Map keys to match the frontend expectations (correct_answer_index)
+    const formattedQuestions = rawQuestions.map(q => ({
+      id: q.id || `skms-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      question: q.question,
+      options: q.options,
+      correct_answer_index: q.correctAnswerIndex !== undefined ? q.correctAnswerIndex : (q.correct_answer_index !== undefined ? q.correct_answer_index : 0),
+      explanation: q.explanation
+    }));
+
+    const shuffledQuestions = formattedQuestions.map(q => shuffleQuestionOptions(q));
     return {
       success: true,
       isFallback: false,
