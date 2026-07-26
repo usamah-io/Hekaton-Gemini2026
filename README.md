@@ -37,7 +37,7 @@ Aplikasi SKS-Master bekerja menggunakan arsitektur aliran data *Serverless-to-Cl
 
 ### Penjelasan Deteksi Jaringan / API Key:
 1.  **Online Mode**: Jika `GEMINI_API_KEY` terkonfigurasi, aplikasi memanfaatkan kecerdasan model generatif untuk meracik pertanyaan unik dari subjek apa pun.
-2.  **Offline Fallback Mode**: Jika API key tidak ada, aplikasi otomatis beralih menggunakan basis data lokal sebanyak 15 soal per mata pelajaran dengan tag kesulitan dinamis.
+2.  **Offline Fallback Mode**: Jika API key tidak ada, aplikasi otomatis beralih menggunakan basis data lokal sebanyak 50 soal per mata pelajaran dengan tag kesulitan dinamis.
 
 ---
 
