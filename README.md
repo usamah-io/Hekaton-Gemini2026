@@ -8,7 +8,7 @@
 
 ### Latar Belakang & Problem Statement
 *   **Sindrom SKS (Sistem Kebut Semalam)**: Kebiasaan belajar mahasiswa/pelajar mendekati hari H ujian memerlukan sarana latihan soal yang instan, relevan, dan adaptif tanpa proses administrasi akun atau penyiapan database yang rumit.
-*   **Kelemahan Kuis Tradisional**: Bank soal statis membuat pelajar menghafal pola jawaban (misalnya jawaban benar selalu di opsi A), bukan memahami konsep akademis.
+*   **Kelemahan Kuis Tradisional**: Bank soal dinamis membuat pelajar menghafal pola jawaban (misalnya jawaban benar selalu di opsi A), bukan memahami konsep akademis.
 *   **Integritas Ujian**: Minimnya proteksi kecurangan pada latihan kuis online mandiri yang memicu siswa untuk menyontek via tab browser lain.
 
 ### Solusi: SKS-Master
