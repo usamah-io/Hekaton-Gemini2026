@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { 
-  Sparkles, 
   BookOpen, 
   Download, 
   History, 
@@ -179,15 +178,6 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-6 pt-16 pb-20 max-w-4xl mx-auto">
-        {/* Hackathon Badge */}
-        <div className={`inline-flex items-center gap-1.5 px-3 py-1 border rounded-full text-xs font-semibold mb-6 shadow-sm animate-bounce duration-1000 ${
-          theme === 'dark'
-            ? 'bg-zinc-900 border-zinc-800 text-zinc-300'
-            : 'bg-zinc-101 border-zinc-200 text-zinc-700'
-        }`}>
-          <Sparkles className="w-3.5 h-3.5 text-blue-500" />
-          <span>Gemini Innovation Hackathon 2026 Entry</span>
-        </div>
 
         {/* Main Title */}
         <h1 className={`text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight mb-6 transition-colors duration-300 ${
